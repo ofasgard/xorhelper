@@ -28,6 +28,7 @@ fn main() {
 	for byte in stdin.bytes() {
 		plain.push(byte.unwrap());
 	}
+	eprintln!("Successfully read {} bytes from STDIN", plain.len());
 	
 	// Use commandline argument to read the keyfile or interpret the key string.
 	let arg = &args[1];
@@ -48,7 +49,14 @@ fn main() {
 	
 	// Translate using the provided key and dump to STDOUT.
 	let result = xorhelper::xor_translate(&plain, &key);
-	let mut stdout = std::io::stdout();
-	let _ = stdout.write(&result);
-	let _ = stdout.flush();
+	match result {
+		Ok(value) => {
+			let mut stdout = std::io::stdout();
+			let _ = stdout.write(&value);
+			let _ = stdout.flush();
+		},
+		Err(message) => {
+			eprintln!("Could not perform translation: {}", message);
+		}
+	}	
 }
