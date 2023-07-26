@@ -51,6 +51,7 @@ fn main() {
 	let result = xorhelper::xor_translate(&plain, &key);
 	match result {
 		Ok(value) => {
+			eprintln!("Successfully translated {} bytes", value.len());
 			let mut stdout = std::io::stdout();
 			let _ = stdout.write(&value);
 			let _ = stdout.flush();
