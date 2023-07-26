@@ -1,25 +1,35 @@
 use std::env;
 use std::io::Write;
 use std::io::Read;
+use std::ffi::OsString;
 
 use xorhelper::ArgResult::FromPath;
 use xorhelper::ArgResult::FromString;
 use xorhelper::ArgResult::Failed;
 
-fn usage(path : &str) {
-	eprintln!("Usage:\n\t$ echo 'hello, world' | {} 'my super secret password' > obfuscated.txt\n", path);
+fn usage(path : &OsString) {
+	let path_str = path.to_str().unwrap();
+	eprintln!("Usage:\n\t$ echo 'hello, world' | {} 'my super secret password' > obfuscated.txt\n", path_str);
 	eprintln!("The data to be translated is read from STDIN.");
 	eprintln!("The translated data is returned to STDOUT.");
 }
 
 fn main() {
 	// Retrieve commandline arguments.
-	let args : Vec<String> = env::args().collect();
+	let args : Vec<OsString> = env::args_os().collect();
 	
 	if args.len() < 2 { 
 		usage(&args[0]); 
 		return;
 	}
+	
+	let key_arg = match args[1].to_str() {
+		Some(s) => s,
+		None => {
+			eprintln!("Could not parse {:?} as a valid UTF-8 string!", &args[1]);
+			return;
+		}
+	};
 	
 	// Read the plaintext from STDIN.
 	let stdin = std::io::stdin();
@@ -31,14 +41,13 @@ fn main() {
 	eprintln!("Successfully read {} bytes from STDIN", plain.len());
 	
 	// Use commandline argument to read the keyfile or interpret the key string.
-	let arg = &args[1];
-	let key : Vec<u8> = match xorhelper::parse_argument(arg) {
+	let key : Vec<u8> = match xorhelper::parse_argument(key_arg) {
 		FromPath(vector) => {
-			eprintln!("Successfully read a {}-byte key from '{}'", vector.len(), arg);
+			eprintln!("Successfully read a {}-byte key from '{}'", vector.len(), key_arg);
 			vector
 		},
 		FromString(vector) => {
-			eprintln!("Using the following string as a key: '{}'", arg);
+			eprintln!("Using the following string as a key: '{}'", key_arg);
 			vector
 		},
 		Failed(error) => {
