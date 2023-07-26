@@ -53,7 +53,7 @@ fn main() {
 		Ok(value) => {
 			eprintln!("Successfully translated {} bytes", value.len());
 			let mut stdout = std::io::stdout();
-			let _ = stdout.write(&value);
+			let _ = stdout.write_all(&value);
 			let _ = stdout.flush();
 		},
 		Err(message) => {
