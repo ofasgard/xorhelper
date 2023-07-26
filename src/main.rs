@@ -53,8 +53,8 @@ fn main() {
 		Ok(value) => {
 			eprintln!("Successfully translated {} bytes", value.len());
 			let mut stdout = std::io::stdout();
-			let _ = stdout.write_all(&value);
-			let _ = stdout.flush();
+			stdout.write_all(&value).expect("Could not write output to STDOUT!");
+			stdout.flush().expect("Could not flush STDOUT after writing output!");
 		},
 		Err(message) => {
 			eprintln!("Could not perform translation: {}", message);
