@@ -56,3 +56,12 @@ pub fn xor_translate(plaintext : &Vec<u8>, key : &Vec<u8>) -> Result<Vec<u8>,Str
 	Ok(output)
 }
 
+/// A convenience function that wraps [xor_translate()] to handle `&str` parameters.
+
+pub fn xor_translate_str(plaintext : &str, key : &str) -> Result<Vec<u8>,String> {
+	let plaintext_bytes : Vec<u8> = plaintext.to_string().into_bytes();
+	let key_bytes: Vec<u8> = key.to_string().into_bytes();
+	let result : Vec<u8> = xor_translate(&plaintext_bytes, &key_bytes)?;
+	Ok(result)
+}
+
