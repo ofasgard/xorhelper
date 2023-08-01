@@ -35,7 +35,7 @@ pub fn parse_argument(arg : &str) -> ArgResult {
 
 /// Translate a vector of byte values by XORing with a repeating key.
 
-pub fn xor_translate(plaintext : &Vec<u8>, key : &Vec<u8>) -> Result<Vec<u8>,String> {
+pub fn xor_translate(plaintext : &[u8], key : &[u8]) -> Result<Vec<u8>,String> {
 	let mut output : Vec<u8> = Vec::new();
 	
 	if plaintext.len() == 0 { return Err("plaintext has a length of zero!".to_string()); }
